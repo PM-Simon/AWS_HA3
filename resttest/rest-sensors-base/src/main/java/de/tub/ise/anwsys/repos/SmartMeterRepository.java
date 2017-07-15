@@ -8,9 +8,6 @@ import de.tub.ise.anwsys.models.SmartMeter;
 public interface SmartMeterRepository extends JpaRepository<SmartMeter, String> {
 
 	List<SmartMeter> findByName(String smId);
-	
-	List<SmartMeter> findAll();
-	
-	
 
+	List<SmartMeter> findAll();
 }

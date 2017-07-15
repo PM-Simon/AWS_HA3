@@ -1,49 +1,68 @@
 package de.tub.ise.anwsys.models;
 
-import java.sql.Timestamp;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-public class SmartMeter {
+public class SmartMeter implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	@JsonIgnore()
 	@Id
 	String id;
 
-	LinkedHashMap<Timestamp, Double> spannung = new LinkedHashMap<>();
-	LinkedHashMap<Timestamp, Double> staerke = new LinkedHashMap<>();
-	
-	
-		
+	@OneToMany(mappedBy = "sm")
+	List<Measurements> measurements = new ArrayList<>();
+
+	public SmartMeter(List<Measurements> measurements) {
+		this.measurements = measurements;
+	}
+
 	protected SmartMeter() {
-		//empty constructor required by JPA
+		// empty constructor required by JPA
 	}
-	
-	public String getId() {
-		return id;
+
+	public List<Measurements> getMeasurements() {
+		return measurements;
 	}
-	public void setId(String id) {
-		this.id = id;
+
+	public void setMeasurements(List<Measurements> measurements) {
+		this.measurements = measurements;
 	}
-	public LinkedHashMap<Timestamp, Double> getSpannung() {
-		return spannung;
+
+	public double getAverageSpannung() {
+		double i = 0;
+		int cnt = 0;
+		while (cnt < 15) {
+			i += measurements.get(cnt).getStromspannung();
+			cnt++;
+		}
+
+		return i / cnt;
+
 	}
-	public void setSpannung(LinkedHashMap<Timestamp, Double> spannung) {
-		this.spannung = spannung;
+
+	public double getAverageStaerke() {
+		double i = 0;
+		int cnt = 0;
+		while (cnt < 15) {
+			i += measurements.get(cnt).getStromstaerke();
+			cnt++;
+		}
+
+		return i / cnt;
+
 	}
-	public LinkedHashMap<Timestamp, Double> getStaerke() {
-		return staerke;
-	}
-	public void setStaerke(LinkedHashMap<Timestamp, Double> staerke) {
-		this.staerke = staerke;
-	}
-	
-	
-	
 
 }
-
-

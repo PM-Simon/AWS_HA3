@@ -1,13 +1,18 @@
 package de.tub.ise.anwsys.controllers;
 
-import java.sql.Timestamp;
-import java.util.Collection;
+import java.util.List;
+
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import de.tub.ise.anwsys.models.Measurements;
 import de.tub.ise.anwsys.models.SmartMeter;
+import de.tub.ise.anwsys.repos.MeasurementRepository;
 import de.tub.ise.anwsys.repos.SmartMeterRepository;
 
 @RestController
@@ -16,75 +21,44 @@ public class SmartMeterController {
 
 	@Autowired
 	SmartMeterRepository repository;
+	
+	@Autowired
+	MeasurementRepository rep;
 
-	@RequestMapping(method = RequestMethod.PUT, value = "/{id}/spannung")
-	public void addNewSpannung(String id, double value, Timestamp time) {
-		SmartMeter sm = (SmartMeter) repository.findByName(id);
-		sm.getSpannung().put(time, value);
+
+	@RequestMapping(method = RequestMethod.GET)
+	public List<SmartMeter> getAllSmartMeter() {
+		List<SmartMeter> SmartMeters = repository.findAll();
+		return SmartMeters;
 	}
-
-	@RequestMapping(method = RequestMethod.PUT, value = "/{id}/spannung")
-	public void addNewStromstaerke(String id, double value, Timestamp time) {
-		SmartMeter sm = (SmartMeter) repository.findByName(id);
-		sm.getStaerke().put(time, value);
+	
+	@RequestMapping(method=RequestMethod.POST)
+	public void addSmartmeter(@RequestBody SmartMeter input){
+		repository.save(new SmartMeter(input.getMeasurements()));
 	}
-
-	//@RequestMapping(method = RequestMethod.GET)
-	//public Collection<SmartMeter> getAllSmartMeter() {
-
-	//}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/{id}")
-	public String getSmartMeter(String id) {
-		double avSpann = getAverageSpannung(((SmartMeter) repository.findByName(id)));
-		double avSta = getAverageStromstaerke(((SmartMeter) repository.findByName(id)));
-		return "SmartMeter: " + id + "\nDurchschnittliche Spannung: " + avSpann + "\nDurchschnittliche Stromstaerke: "
-				+ avSta;
+	public SmartMeter getSmartMeter(@PathVariable String id) {
+		SmartMeter sm = repository.findOne(id);
+		return sm;
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/{id}/spannung")
-	public String spannung(String id) {
-		double avSpann = getAverageSpannung(((SmartMeter) repository.findByName(id)));
-		return "SmartMeter: " + id + "\nDurchschnittliche Spannung: " + avSpann;
+	public Double getSpannung(@PathVariable String id) {
+		return repository.findOne(id).getAverageSpannung();
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/{id}/stromstaerke")
-	public String staerke(String id) {
-		double avSta = getAverageStromstaerke(((SmartMeter) repository.findByName(id)));
-		return "SmartMeter: " + id + "\nDurchschnittliche Spannung: " + avSta;
+	public double staerke(@PathVariable String id) {
+		return repository.findOne(id).getAverageStaerke();
 	}
 
-	private double getAverageSpannung(SmartMeter sm) {
-
-		double sum = 0;
-		int nr = sm.getSpannung().size();
-
-		Double[] k = (Double[]) sm.getSpannung().values().toArray();
-
-		for (int i = 0; i < k.length; i++) {
-			sum += k[i];
-		}
-
-		return sum / 1;
-
+	@RequestMapping(method = RequestMethod.PUT, value ="/{id}/measurement")
+	public void addSpannung(@RequestBody Measurements m){
+		rep.save(new Measurements(m.getStromstaerke(),m.getStromspannung(),m.getSm(),m.getTime()));
 	}
+	
 
-	private double getAverageStromstaerke(SmartMeter sm) {
 
-		double sum = 0;
-		int nr = sm.getStaerke().size();
 
-		Double[] k = (Double[]) sm.getStaerke().values().toArray();
-
-		for (int i = 0; i < k.length; i++) {
-			sum += k[i];
-		}
-
-		return sum / 1;
-
-	}
-
-	/*
-	 * GET gibt HashMap aus
-	 */
 }
