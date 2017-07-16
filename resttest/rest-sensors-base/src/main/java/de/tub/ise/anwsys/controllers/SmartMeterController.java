@@ -22,58 +22,58 @@ import de.tub.ise.anwsys.repos.SmartMeterRepository;
 public class SmartMeterController {
 
 	@Autowired
-	SmartMeterRepository repository;
+	SmartMeterRepository SMrepository;
 	
 	@Autowired
-	MeasurementRepository rep;
+	MeasurementRepository Mrepository;
 
 
 	@RequestMapping(method = RequestMethod.GET)
 	public List<SmartMeter> getAllSmartMeter() {
 		validateSmartMeterList();
-		List<SmartMeter> SmartMeters = repository.findAll();
+		List<SmartMeter> SmartMeters = SMrepository.findAll();
 		return SmartMeters;
 	}
 	
 	@RequestMapping(method=RequestMethod.POST)
 	public void addSmartmeter(@RequestBody SmartMeter input){
-		repository.save(new SmartMeter(input.getMeasurements()));
+		SMrepository.save(new SmartMeter(input.getMeasurements()));
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/{id}")
 	public SmartMeter getSmartMeter(@PathVariable String id) {
 		validateSmartMeter(id);
-		SmartMeter sm = repository.findOne(id);
+		SmartMeter sm = SMrepository.findOne(id);
 		return sm;
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/{id}/spannung")
 	public Double getSpannung(@PathVariable String id) {
 		validateSmartMeter(id);
-		return repository.findOne(id).getAverageSpannung();
+		return SMrepository.findOne(id).getAverageSpannung();
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/{id}/stromstaerke")
 	public double staerke(@PathVariable String id) {
 		validateSmartMeter(id);
-		return repository.findOne(id).getAverageStaerke();
+		return SMrepository.findOne(id).getAverageStaerke();
 	}
 
 	@RequestMapping(method = RequestMethod.PUT, value ="/{id}/measurement")
 	public void addSpannung(@PathVariable String id,@RequestBody Measurements m){
 		validateSmartMeter(id);
-		rep.save(new Measurements(m.getStromstaerke(),m.getStromspannung(),m.getSm(),m.getTime()));
+		Mrepository.save(new Measurements(m.getStromstaerke(),m.getStromspannung(),m.getSm(),m.getTime()));
 	}
 	
 
 	public void validateSmartMeter(String id){
-		if(this.repository.findByName(id) == null){
+		if(this.SMrepository.findByName(id) == null){
 			new SmartMeterNotFoundExceptions(id);
 		}
 	}
 
 	public void validateSmartMeterList(){
-		if(repository.findAll() ==null){
+		if(SMrepository.findAll() ==null){
 			new SmartMeterListNotFoundException();
 		}
 	}

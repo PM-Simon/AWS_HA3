@@ -44,26 +44,26 @@ public class SmartMeter implements Serializable {
 	}
 
 	public double getAverageSpannung() {
-		double i = 0;
+		double kumulierteStromspannung = 0;
 		int cnt = 0;
-		while (cnt < 15) {
-			i += measurements.get(cnt).getStromspannung();
+		while (cnt < 900) {
+			kumulierteStromspannung += measurements.get(cnt).getStromspannung();
 			cnt++;
 		}
 
-		return i / cnt;
+		return kumulierteStromspannung / cnt;
 
 	}
 
 	public double getAverageStaerke() {
-		double i = 0;
+		double kumulierteStromstaerke = 0;
 		int cnt = 0;
-		while (cnt < 15) {
-			i += measurements.get(cnt).getStromstaerke();
+		while (cnt < 900) {
+			kumulierteStromstaerke += measurements.get(cnt).getStromstaerke();
 			cnt++;
 		}
 
-		return i / cnt;
+		return kumulierteStromstaerke / cnt;
 
 	}
 
