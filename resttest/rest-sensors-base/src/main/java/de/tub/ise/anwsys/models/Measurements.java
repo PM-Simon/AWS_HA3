@@ -3,16 +3,19 @@ package de.tub.ise.anwsys.models;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
 
-import org.springframework.data.annotation.Id;
+
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-
+@Entity
 public class Measurements implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -20,11 +23,13 @@ public class Measurements implements Serializable {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	Long id;
+	@Column(name="Measurement_ID")
+	private long id;
 	
 	@JsonIgnore
 	@ManyToOne
 	SmartMeter sm;
+	
 	double Stromstaerke;
 	double Stromspannung;
 	Timestamp time;

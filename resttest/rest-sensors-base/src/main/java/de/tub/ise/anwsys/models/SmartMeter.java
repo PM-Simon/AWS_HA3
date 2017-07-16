@@ -20,6 +20,8 @@ public class SmartMeter implements Serializable {
 
 	@JsonIgnore()
 	@Id
+	Long ID;
+	
 	String id;
 
 	@OneToMany(mappedBy = "sm")
